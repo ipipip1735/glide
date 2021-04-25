@@ -1,52 +1,32 @@
-package mine.glide;
+package mine.onelib;
+
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.os.StrictMode;
-import android.view.View;
-import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.request.Request;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.target.ImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.target.ViewTarget;
 import com.bumptech.glide.request.transition.Transition;
 
 import java.io.File;
 
 /**
- * Created by Administrator on 2021/3/23.
+ * Created by Administrator on 2021/3/28.
  */
-public class MainActivity extends AppCompatActivity {
+public class OneConfigActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         System.out.println("*********  " + getClass().getSimpleName() + ".onCreate  *********");
         setContentView(R.layout.activity_client);
-
-
-        //Activity.onCreate()中布局参数为负值，所以不会加载资源，等ViewTreeObserver.OnPreDrawListener()触发后（布局值已经确定）才会加载
-//        ImageView imageView = findViewById(R.id.image);
-//        System.out.println("height = " + imageView.getLayoutParams().height + ", widht = " + imageView.getLayoutParams().width);
-        String url = "https://p.d1xz.net/2015/8/31/111855325532.jpg";
-//
-//        TheCustomViewTarget theCustomViewTarget = new TheCustomViewTarget(imageView);
-//        Glide.with(this)
-//                .load(url)
-//                .into(theCustomViewTarget);
-
-
     }
 
     @Override
@@ -110,71 +90,50 @@ public class MainActivity extends AppCompatActivity {
     public void start(View view) {
         System.out.println("~~button.start~~");
 
-        String url = "https://p.d1xz.net/2015/8/31/111855325532.jpg";
-//        url = null;
-        ImageView imageView = (ImageView) findViewById(R.id.image);
-
-        //各种占位图片
-        Glide.with(this)
-                .load(url)
-//                .placeholder(R.drawable.ic_launcher_background)//占位图片
-//                .error(R.drawable.ic_launcher_foreground)//错误图片（加载失败显示的图片）
-//                .fallback(R.drawable.ic_baseline_block_24)//空图片（URL为空时显示的图片）
-                .into(imageView);
+        Glide.get(this);
     }
 
 
     public void stop(View view) {
         System.out.println("~~button.stop~~");
+        ImageView imageView = (ImageView) findViewById(R.id.image);
+        String url = "http://img2.a0bi.com/upload/qz/20150714/313479192953-266.jpg";
 
+        Target<Drawable> target = new CustomTarget<Drawable>(50, 50) {
+            @Override
+            public void onResourceReady(@NonNull Drawable resource,
+                                        @Nullable Transition<? super Drawable> transition) {
+                System.out.println("~~Target.onResourceReady~~");
+                System.out.println("resource = " + resource + ", transition = " + transition);
+                imageView.setImageDrawable(resource);
+            }
 
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+                System.out.println("~~Target.onLoadCleared~~");
+            }
+        };
+
+        //自定义Model
+//        Glide.with(this)
+//                .as(Drawable.class)
+//                .load(new TheM(0))
+//                .into(target);
+
+        //自定义Model
+        Glide.with(this)
+                .as(Drawable.class)
+                .load(new File(getCacheDir(), "leaf.jpg"))
+                .into(target);
     }
 
     public void bind(View view) {
         System.out.println("~~button.bind~~");
 
-        String url = "https://p.d1xz.net/2015/8/31/111855325532.jpg";
-        ImageView imageView = (ImageView) findViewById(R.id.image);
-
-        File file = new File(getCacheDir(), "box.jpg");
-        if (!file.exists()) return;
-
-
-        //方式一：自定义Target
-        TheTarget<Drawable> target = new TheTarget<>(imageView);
-        Glide.with(this)
-                .load(file)
-                .into(target);
-
-//        imageView.setImageDrawable(target.getT());
-//        Glide.with(this).clear(target);
-
-        //方式二：
-//        Target target = Glide.with(this)
-//                .load(file)
-//                .into(imageView);//ImageView将被包装为Target
-//        System.out.println("target = " + target);
-
     }
 
     public void unbind(View view) {
         System.out.println("~~button.unbind~~");
-        String url = "https://p.d1xz.net/2015/8/31/111855325532.jpg";
-
-
-//        File file = new File(getCacheDir(), "box.jpg");
-//        if (!file.exists()) return;
-
-        ImageView imageView = findViewById(R.id.image);
-
-        TheCustomViewTarget theCustomViewTarget = new TheCustomViewTarget(imageView);
-
-        Glide.with(this)
-                .load(url)
-                .into(theCustomViewTarget.waitForLayout());
-
-//        Glide.with(this).clear(theCustomViewTarget);
-
     }
 
     public void reloading(View view) {
