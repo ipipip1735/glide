@@ -24,7 +24,8 @@
 <!--        <activity android:name=".TransitionActivity">-->
 <!--        <activity android:name=".ConfigActivity">-->
 <!--        <activity android:name=".CacheActivity">-->
-        <activity android:name=".RequestManagerActivity">
+<!--        <activity android:name=".RequestManagerActivity">-->
+        <activity android:name=".RecycleViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
